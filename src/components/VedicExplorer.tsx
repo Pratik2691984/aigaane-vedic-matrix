@@ -11,11 +11,12 @@ import WearablePanel from './WearablePanel';
 import ClinicalPanel from './ClinicalPanel';
 import ExportBar from './ExportBar';
 import SrutiExplorer from './SrutiExplorer';
+import VedicMatrixEngineTab from './tabs/VedicMatrixEngineTab';
 import type { Domain } from '@/lib/types';
 
 const DOMAINS: Array<Domain | 'All'> = ['All', 'Physical', 'Mental', 'Bridge', 'Vedic', 'Research'];
 
-type Tab = 'map' | 'sruti' | 'calc' | 'quiz' | 'insight' | 'wear' | 'clinic';
+type Tab = 'map' | 'sruti' | 'engine' | 'calc' | 'quiz' | 'insight' | 'wear' | 'clinic';
 
 function Shell() {
   const m = useMatrix();
@@ -25,6 +26,7 @@ function Shell() {
   const labels: Record<Tab, string> = {
     map: 'Map + cards',
     sruti: '22-śruti explorer',
+    engine: 'Vedic matrix engine',
     calc: 'Vedic calculator',
     quiz: 'Quiz',
     insight: 'Daily insight',
@@ -80,7 +82,7 @@ function Shell() {
         </div>
         <div className="tel">{m.telemetry}</div>
         <div className="tabs row">
-          {(['map', 'sruti', 'calc', 'quiz', 'insight', 'wear', 'clinic'] as const).map((t) => (
+          {(['map', 'sruti', 'engine', 'calc', 'quiz', 'insight', 'wear', 'clinic'] as const).map((t) => (
             <button key={t} className={tab === t ? 'on' : ''} onClick={() => setTab(t)}>{labels[t]}</button>
           ))}
         </div>
@@ -98,6 +100,7 @@ function Shell() {
           </>
         )}
         {tab === 'sruti' && <SrutiExplorer />}
+        {tab === 'engine' && <VedicMatrixEngineTab />}
         {tab === 'calc' && <VedicCalculator />}
         {tab === 'quiz' && <BodyMindQuiz />}
         {tab === 'insight' && <DailyInsight />}
