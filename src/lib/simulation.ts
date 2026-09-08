@@ -36,8 +36,8 @@ export function stressFromHrv(rmssd: number): number {
   return clamp((80 - rmssd) / 0.6, 0, 100);
 }
 
-export function layaFromBpm(bpm: number): 'Vilambit' | 'Madhya' | 'Drut' {
-  if (bpm < 72) return 'Vilambit';
-  if (bpm < 110) return 'Madhya';
-  return 'Drut';
+export function layaFromBpm(bpm: number): 'vilambita' | 'madhya' | 'druta' {
+  if (bpm < 72) return 'vilambita';
+  if (bpm < 110) return 'madhya';
+  return 'druta';
 }
