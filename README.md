@@ -1,34 +1,26 @@
 # aigaane-vedic-matrix
 
-Drop-in Next.js App Router module for [aigaane.in](https://aigaane.in).
+Complete 10-feature Body–Mind–Vedic controller for aigaane.in.
 
-## Route
+Live route: `/vedic-matrix`
 
-`/vedic-matrix` — 22-Śruti just-intonation lattice + tanpura drone + 51-subsystem graph.
+## Features
 
-## Copy into an existing Next.js app
+1. Hover cards — domain badge, Lucide token name, 5-level popup
+2. Zoomable map — 0.2×–2.5× pan/zoom SVG canvas, domain clusters
+3. Connection lines — 57 directed edges (51 target links + loop extras), 5 kinds
+4. Loop animations — dash pulse on feedback + acoustic edges
+5. Dynamic sliders — Matrix 3 transfer functions (stress, vagal, laya)
+6. Vedic calculator — 2^n prāstāra, Meru, Virahanka, 22-śruti JI audio
+7. Body–mind quiz — 10-item bank mapped to node ids
+8. Daily insights — `NodeIndex = (dayOfYear % 51) + 1`
+9. Wearable telemetry — mock JSON + Web Bluetooth request with mock fallback
+10. Export — PNG, SVG, JSON system state
 
-```
-src/app/vedic-matrix/page.tsx
-src/components/VedicExplorer.tsx
-src/lib/secureAcoustics.ts
-src/lib/vedicCombinatorics.ts
-src/data/subsystemGraph.json
-```
-
-Path alias `@/*` → `./src/*` is required.
-
-## Local test
+## Run
 
 ```bash
 npm install
 npm run dev
-# open http://localhost:3000/vedic-matrix
+# http://localhost:3000/vedic-matrix
 ```
-
-## Notes
-
-- AudioContext is client-only and gated behind user gesture (`trigger` / `toggleDrone`).
-- Packed 32-bit śruti ratios: `(num << 16) | den`.
-- Tabs filter the 51-subsystem list; śruti pads stay global.
-- Combinatorics (`meruPrastara`, `sanyoga`) are exported for later Pingala UI, not yet wired into the explorer.
