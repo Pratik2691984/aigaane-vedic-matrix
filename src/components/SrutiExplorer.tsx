@@ -9,6 +9,7 @@ import {
   SYNTONIC_COMMA_CENTS,
 } from '@/lib/plompLevelt';
 import { useMatrix } from '@/context/MatrixContext';
+import BiotensegrityPanel from './BiotensegrityPanel';
 
 interface SrutiData {
   index: number;
@@ -153,6 +154,14 @@ export default function SrutiExplorer() {
           );
         })}
       </div>
+
+      <BiotensegrityPanel
+        roughness={plomp}
+        stress={m.stress}
+        vagalTone={m.vagal}
+        targetFreq={targetFreq}
+        srutiName={`${selected.symbol} · ${selected.nameIast}`}
+      />
     </div>
   );
 }
