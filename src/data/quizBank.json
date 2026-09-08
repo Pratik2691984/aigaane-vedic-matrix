@@ -1,0 +1,14 @@
+{
+  "items": [
+    {"id":"q1","prompt":"Which bridge nerve carries high-frequency HRV power and links breath to heart?","answerId":"node_25","distractorIds":["node_08","node_26","node_03"],"hint":"The wandering nerve."},
+    {"id":"q2","prompt":"Pingala's mountain of binomial coefficients is which subsystem?","answerId":"node_36","distractorIds":["node_34","node_37","node_42"],"hint":"Meru Prāstāra."},
+    {"id":"q3","prompt":"0.1 Hz resonant breathing is the primary metric of which node?","answerId":"node_09","distractorIds":["node_08","node_45","node_25"],"hint":"Respiratory."},
+    {"id":"q4","prompt":"Virahanka recurrence S(n)=S(n-1)+S(n-2) belongs to?","answerId":"node_37","distractorIds":["node_35","node_41","node_40"],"hint":"The sequence behind mātrā-vṛtta."},
+    {"id":"q5","prompt":"Vadi–Samvadi axis is the metric of?","answerId":"node_39","distractorIds":["node_38","node_20","node_45"],"hint":"Rāga structure."},
+    {"id":"q6","prompt":"Cortisol awakening curve is owned by?","answerId":"node_26","distractorIds":["node_29","node_04","node_50"],"hint":"HPA axis."},
+    {"id":"q7","prompt":"7 śuddha + 5 vikṛt describes?","answerId":"node_43","distractorIds":["node_38","node_39","node_34"],"hint":"Twelve-note working set."},
+    {"id":"q8","prompt":"SCFA / butyrate ratio is the metric of?","answerId":"node_11","distractorIds":["node_10","node_27","node_30"],"hint":"Gut microbiome."},
+    {"id":"q9","prompt":"Which research node verifies CpG methylation %?","answerId":"node_49","distractorIds":["node_32","node_46","node_50"],"hint":"Epigenetic analysis."},
+    {"id":"q10","prompt":"Vilambit / Madhya / Drut are tempi of?","answerId":"node_45","distractorIds":["node_40","node_41","node_08"],"hint":"Laya."}
+  ]
+}
