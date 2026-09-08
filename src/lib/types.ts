@@ -1,6 +1,6 @@
 export type Domain = 'Physical' | 'Mental' | 'Bridge' | 'Vedic' | 'Research';
 export type EdgeKind = 'feedforward' | 'feedback' | 'bridge' | 'acoustic' | 'measurement';
-export type LayaName = 'Vilambit' | 'Madhya' | 'Drut';
+export type LayaName = 'vilambita' | 'madhya' | 'druta';
 
 export interface SubsystemNode {
   id: string;

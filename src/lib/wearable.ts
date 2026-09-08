@@ -40,9 +40,9 @@ export function ingestWearable(p: WearableTelemetryPayload) {
   const stress = clamp((85 - p.hrvRmssdMs) / 0.65, 0, 100);
   const vagal = clamp(p.derivedStates.autonomicBalanceIndex * 100, 0, 100);
   const laya =
-    p.derivedStates.recommendedLayaTempo === 'Vilambit'
+    p.derivedStates.recommendedLayaTempo === 'vilambita'
       ? 60
-      : p.derivedStates.recommendedLayaTempo === 'Madhya'
+      : p.derivedStates.recommendedLayaTempo === 'madhya'
         ? 96
         : 132;
   return { stress, vagal, laya, payload: p };

@@ -9,6 +9,6 @@
     {"id":"q7","prompt":"7 śuddha + 5 vikṛt describes?","answerId":"node_43","distractorIds":["node_38","node_39","node_34"],"hint":"Twelve-note working set."},
     {"id":"q8","prompt":"SCFA / butyrate ratio is the metric of?","answerId":"node_11","distractorIds":["node_10","node_27","node_30"],"hint":"Gut microbiome."},
     {"id":"q9","prompt":"Which research node verifies CpG methylation %?","answerId":"node_49","distractorIds":["node_32","node_46","node_50"],"hint":"Epigenetic analysis."},
-    {"id":"q10","prompt":"Vilambit / Madhya / Drut are tempi of?","answerId":"node_45","distractorIds":["node_40","node_41","node_08"],"hint":"Laya."}
+    {"id":"q10","prompt":"Slow (vilambita) / Medium (madhya) / Fast (druta) are tempi of?","answerId":"node_45","distractorIds":["node_40","node_41","node_08"],"hint":"Laya."}
   ]
 }
