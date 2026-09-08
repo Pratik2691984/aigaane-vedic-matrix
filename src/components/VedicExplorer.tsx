@@ -12,11 +12,12 @@ import ClinicalPanel from './ClinicalPanel';
 import BiotensegrityPanel from './BiotensegrityPanel';
 import ExportBar from './ExportBar';
 import SrutiExplorer from './SrutiExplorer';
+import VedicMatrixEngineTab from './tabs/VedicMatrixEngineTab';
 import type { Domain } from '@/lib/types';
 
 const DOMAINS: Array<Domain | 'All'> = ['All', 'Physical', 'Mental', 'Bridge', 'Vedic', 'Research'];
 
-type Tab = 'map' | 'sruti' | 'calc' | 'quiz' | 'insight' | 'wear' | 'clinic' | 'fascia';
+type Tab = 'map' | 'sruti' | 'engine' | 'fascia' | 'calc' | 'quiz' | 'insight' | 'wear' | 'clinic';
 
 function Shell() {
   const m = useMatrix();
@@ -26,12 +27,13 @@ function Shell() {
   const labels: Record<Tab, string> = {
     map: 'Map + cards',
     sruti: '22-śruti explorer',
+    engine: 'Vedic matrix engine',
+    fascia: 'Fascial lattice',
     calc: 'Vedic calculator',
     quiz: 'Quiz',
     insight: 'Daily insight',
     wear: 'Wearable',
     clinic: 'Working bench',
-    fascia: 'Fascial lattice',
   };
 
   return (
@@ -82,7 +84,7 @@ function Shell() {
         </div>
         <div className="tel">{m.telemetry}</div>
         <div className="tabs row">
-          {(['map', 'sruti', 'calc', 'quiz', 'insight', 'wear', 'clinic', 'fascia'] as const).map((t) => (
+          {(['map', 'sruti', 'engine', 'fascia', 'calc', 'quiz', 'insight', 'wear', 'clinic'] as const).map((t) => (
             <button key={t} className={tab === t ? 'on' : ''} onClick={() => setTab(t)}>{labels[t]}</button>
           ))}
         </div>
@@ -100,12 +102,13 @@ function Shell() {
           </>
         )}
         {tab === 'sruti' && <SrutiExplorer />}
+        {tab === 'engine' && <VedicMatrixEngineTab />}
+        {tab === 'fascia' && <BiotensegrityPanel />}
         {tab === 'calc' && <VedicCalculator />}
         {tab === 'quiz' && <BodyMindQuiz />}
         {tab === 'insight' && <DailyInsight />}
         {tab === 'wear' && <WearablePanel />}
         {tab === 'clinic' && <ClinicalPanel />}
-        {tab === 'fascia' && <BiotensegrityPanel />}
       </div>
       {m.selected && (
         <div className="popup" onClick={() => m.setSelected(null)}>

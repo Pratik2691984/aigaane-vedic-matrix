@@ -1,7 +1,8 @@
 /**
  * Biotensegrity mechanotransduction and acoustic resonance model.
  * Educational coupling of Plomp–Levelt roughness to fascial / cellular state.
- * Not a clinical assay and not a measurement of living fascia.
+ * Pitch ratios come from vedicMatrixEngine / the 22-śruti lattice; this module
+ * never retunes f_i. Not a clinical assay and not a measurement of living fascia.
  */
 
 export interface BiotensegrityState {
