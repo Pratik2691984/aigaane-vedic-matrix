@@ -10,17 +10,21 @@ import DailyInsight from './DailyInsight';
 import WearablePanel from './WearablePanel';
 import ClinicalPanel from './ClinicalPanel';
 import ExportBar from './ExportBar';
+import SrutiExplorer from './SrutiExplorer';
 import type { Domain } from '@/lib/types';
 
 const DOMAINS: Array<Domain | 'All'> = ['All', 'Physical', 'Mental', 'Bridge', 'Vedic', 'Research'];
 
+type Tab = 'map' | 'sruti' | 'calc' | 'quiz' | 'insight' | 'wear' | 'clinic';
+
 function Shell() {
   const m = useMatrix();
   const [drone, setDrone] = useState(false);
-  const [tab, setTab] = useState<'map' | 'calc' | 'quiz' | 'insight' | 'wear' | 'clinic'>('map');
+  const [tab, setTab] = useState<Tab>('map');
   const visible = m.domainFilter === 'All' ? m.nodes : m.nodes.filter((n) => n.domain === m.domainFilter);
-  const labels: Record<typeof tab, string> = {
+  const labels: Record<Tab, string> = {
     map: 'Map + cards',
+    sruti: '22-śruti explorer',
     calc: 'Vedic calculator',
     quiz: 'Quiz',
     insight: 'Daily insight',
@@ -76,7 +80,7 @@ function Shell() {
         </div>
         <div className="tel">{m.telemetry}</div>
         <div className="tabs row">
-          {(['map', 'calc', 'quiz', 'insight', 'wear', 'clinic'] as const).map((t) => (
+          {(['map', 'sruti', 'calc', 'quiz', 'insight', 'wear', 'clinic'] as const).map((t) => (
             <button key={t} className={tab === t ? 'on' : ''} onClick={() => setTab(t)}>{labels[t]}</button>
           ))}
         </div>
@@ -93,6 +97,7 @@ function Shell() {
             </div>
           </>
         )}
+        {tab === 'sruti' && <SrutiExplorer />}
         {tab === 'calc' && <VedicCalculator />}
         {tab === 'quiz' && <BodyMindQuiz />}
         {tab === 'insight' && <DailyInsight />}
