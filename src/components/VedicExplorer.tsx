@@ -1,143 +1,117 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
+import { MatrixProvider, useMatrix } from '@/context/MatrixContext';
 import { acousticEngine } from '@/lib/secureAcoustics';
-import graph from '@/data/subsystemGraph.json';
+import ZoomMap from './ZoomMap';
+import VedicCalculator from './VedicCalculator';
+import BodyMindQuiz from './BodyMindQuiz';
+import DailyInsight from './DailyInsight';
+import WearablePanel from './WearablePanel';
+import ExportBar from './ExportBar';
+import type { Domain } from '@/lib/types';
 
-type Domain = 'All' | 'Physical' | 'Mental' | 'Vedic';
+const DOMAINS: Array<Domain | 'All'> = ['All', 'Physical', 'Mental', 'Bridge', 'Vedic', 'Research'];
 
-type Subsystem = {
-  id: number;
-  name: string;
-  domain: Exclude<Domain, 'All'>;
-  srutiHint?: number;
-  note?: string;
-};
-
-const SUBSYSTEMS = graph.subsystems as Subsystem[];
-
-export default function VedicExplorer() {
-  const [baseSa, setBaseSa] = useState<number>(240);
-  const [droneActive, setDroneActive] = useState<boolean>(false);
-  const [telemetry, setTelemetry] = useState<string>('Ready. Click any Śruti node to calibrate.');
-  const [activeTab, setActiveTab] = useState<Domain>('All');
-
-  const srutiLabels = acousticEngine.getLabels();
-
-  const visible = useMemo(
-    () => (activeTab === 'All' ? SUBSYSTEMS : SUBSYSTEMS.filter((s) => s.domain === activeTab)),
-    [activeTab]
-  );
-
-  const handleNoteClick = (idx: number) => {
-    const res = acousticEngine.trigger(idx, baseSa);
-    setTelemetry(`Activated: [${idx + 1}] ${res.name} | Frequency: ${res.freq.toFixed(2)} Hz | Interval: +${res.cents}¢`);
-  };
-
-  const handleDroneToggle = () => {
-    acousticEngine.toggleDrone(baseSa, (active) => setDroneActive(active));
-  };
-
-  const handleFreqChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = parseFloat(e.target.value);
-    setBaseSa(val);
-    acousticEngine.updateDroneFreq(val);
-  };
+function Shell() {
+  const m = useMatrix();
+  const [drone, setDrone] = useState(false);
+  const [tab, setTab] = useState<'map' | 'calc' | 'quiz' | 'insight' | 'wear'>('map');
+  const visible = m.domainFilter === 'All' ? m.nodes : m.nodes.filter((n) => n.domain === m.domainFilter);
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-6 bg-slate-950 text-slate-100 rounded-2xl border border-slate-800 shadow-2xl space-y-6">
-      <header className="border-b border-slate-800 pb-4">
-        <h1 className="text-2xl font-bold tracking-wide text-amber-400">
-          Body-Mind-Vedic Subsystem Controller
-        </h1>
-        <p className="text-xs text-slate-400 font-mono mt-1">
-          22-Śruti Pure Just Intonation Lattice & Combinatorial Architecture
-        </p>
-      </header>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-900/80 p-4 rounded-xl border border-slate-800">
-        <div className="flex flex-col gap-1">
-          <label className="text-xs text-slate-400 font-mono">
-            Ādhāra Ṣaḍja (Base Sa): <span className="text-amber-400 font-bold">{baseSa.toFixed(1)} Hz</span>
-          </label>
-          <input
-            type="range"
-            min="120"
-            max="360"
-            step="0.5"
-            value={baseSa}
-            onChange={handleFreqChange}
-            className="accent-amber-500 cursor-pointer"
-          />
+    <div className="shell">
+      <div id="matrix-root" className="panel stack">
+        <header>
+          <h1>Body–Mind–Vedic Matrix</h1>
+          <p className="sub">51 subsystems · 22-śruti just intonation · English first, IAST in parentheses</p>
+        </header>
+        <div className="grid3">
+          <div>
+            <label className="meta">Stress S = {m.stress.toFixed(0)}</label>
+            <input type="range" min={0} max={100} value={m.stress} onChange={(e) => m.setStress(+e.target.value)} />
+          </div>
+          <div>
+            <label className="meta">Vagal tone V = {m.vagal.toFixed(0)}</label>
+            <input type="range" min={0} max={100} value={m.vagal} onChange={(e) => m.setVagal(+e.target.value)} />
+          </div>
+          <div>
+            <label className="meta">Laya L = {m.laya.toFixed(0)} BPM · śvāsa {m.sim.breathRate.toFixed(1)} / min</label>
+            <input type="range" min={40} max={180} value={m.laya} onChange={(e) => m.setLaya(+e.target.value)} />
+          </div>
         </div>
-
-        <div className="flex items-end">
-          <button
-            onClick={handleDroneToggle}
-            className={`w-full py-2 px-4 rounded-lg font-semibold text-sm transition-all ${
-              droneActive
-                ? 'bg-rose-600 hover:bg-rose-700 text-white'
-                : 'bg-emerald-600 hover:bg-emerald-700 text-white'
-            }`}
-          >
-            {droneActive ? 'Stop Tanpura Drone' : 'Engage Tanpura Drone'}
+        <div className="metrics">
+          <div>Cortisol <b>{m.sim.cortisol.toFixed(1)}</b></div>
+          <div>HR <b>{m.sim.heartRate.toFixed(0)}</b></div>
+          <div>RMSSD <b>{m.sim.hrvRmssd.toFixed(0)}</b> ms</div>
+          <div>Bandwidth <b>{m.sim.bandwidth.toFixed(0)}</b>%</div>
+          <div>Inhib. gain <b>{m.sim.inhibitionGain.toFixed(2)}</b></div>
+          <div>Cytokines <b>{m.sim.cytokines.toFixed(2)}</b></div>
+          <div>0.1 Hz coherence <b>{(m.sim.coherence * 100).toFixed(0)}</b>%</div>
+        </div>
+        <div className="row">
+          <div style={{ flex: 1 }}>
+            <label className="meta">Ādhāra ṣaḍja {m.baseSa.toFixed(1)} Hz</label>
+            <input type="range" min={120} max={360} step={0.5} value={m.baseSa} onChange={(e) => { const v = +e.target.value; m.setBaseSa(v); acousticEngine.updateDroneFreq(v); }} />
+          </div>
+          <button className={drone ? 'btn rose' : 'btn em'} onClick={() => acousticEngine.toggleDrone(m.baseSa, setDrone)}>
+            {drone ? 'Stop tānpūrā' : 'Tānpūrā drone'}
           </button>
+          <button className={m.loopOn ? 'btn gold' : 'btn'} onClick={() => m.setLoopOn(!m.loopOn)}>
+            {m.loopOn ? 'Loops on' : 'Loops off'}
+          </button>
+          <ExportBar targetId="matrix-root" />
         </div>
-
-        <div className="flex gap-2 items-end">
-          {(['All', 'Physical', 'Mental', 'Vedic'] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-2 text-xs font-mono rounded-lg transition-colors ${
-                activeTab === tab
-                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
-              }`}
-            >
-              {tab}
+        <div className="tabs row">
+          {DOMAINS.map((d) => (
+            <button key={d} className={m.domainFilter === d ? 'on' : ''} onClick={() => m.setDomainFilter(d)}>{d}</button>
+          ))}
+        </div>
+        <div className="tel">{m.telemetry}</div>
+        <div className="tabs row">
+          {(['map', 'calc', 'quiz', 'insight', 'wear'] as const).map((t) => (
+            <button key={t} className={tab === t ? 'on' : ''} onClick={() => setTab(t)}>
+              {t === 'map' ? 'Map + cards' : t === 'calc' ? 'Vedic calculator' : t === 'quiz' ? 'Quiz' : t === 'insight' ? 'Daily insight' : 'Wearable'}
             </button>
           ))}
         </div>
+        {tab === 'map' && (
+          <>
+            <ZoomMap />
+            <div className="list">
+              {visible.map((n) => (
+                <button key={n.id} className="item" onClick={() => { m.setSelected(n); const r = acousticEngine.trigger(n.srutiHint, m.baseSa); m.setTelemetry(`${n.domain} · ${n.name} · ${r.name} ${r.freq.toFixed(1)} Hz`); }} onMouseEnter={() => m.setHover(n)}>
+                  <div className="sub">{n.id} · {n.icon}</div>
+                  <div>{n.name}</div>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+        {tab === 'calc' && <VedicCalculator />}
+        {tab === 'quiz' && <BodyMindQuiz />}
+        {tab === 'insight' && <DailyInsight />}
+        {tab === 'wear' && <WearablePanel />}
       </div>
-
-      <div className="p-3 bg-black/60 border border-slate-800 rounded-lg font-mono text-xs text-emerald-400">
-        {telemetry}
-      </div>
-
-      <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
-        {srutiLabels.map((lbl, idx) => (
-          <button
-            key={idx}
-            onClick={() => handleNoteClick(idx)}
-            className="p-3 bg-slate-900 border border-slate-800 hover:border-amber-500/50 hover:bg-slate-800/80 active:scale-95 rounded-xl transition-all flex flex-col items-center justify-center gap-1 group"
-          >
-            <span className="text-xs text-slate-500 font-mono">#{idx + 1}</span>
-            <span className="text-sm font-bold text-amber-200 group-hover:text-amber-400">{lbl}</span>
-          </button>
-        ))}
-      </div>
-
-      <section>
-        <h2 className="text-sm font-mono text-slate-400 mb-2">
-          Subsystems ({visible.length}/{SUBSYSTEMS.length}) — {activeTab}
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-72 overflow-y-auto">
-          {visible.map((s) => (
-            <button
-              key={s.id}
-              onClick={() => {
-                if (typeof s.srutiHint === 'number') handleNoteClick(s.srutiHint);
-                setTelemetry(`${s.domain} · ${s.name}${s.note ? ' — ' + s.note : ''}`);
-              }}
-              className="text-left p-3 rounded-lg border border-slate-800 bg-slate-900/70 hover:border-amber-500/40"
-            >
-              <div className="text-[10px] uppercase tracking-wide text-slate-500">{s.domain} · #{s.id}</div>
-              <div className="text-sm text-amber-100">{s.name}</div>
-            </button>
-          ))}
+      {m.selected && (
+        <div className="popup" onClick={() => m.setSelected(null)}>
+          <div className="inner" onClick={(e) => e.stopPropagation()}>
+            <div className="badge">{m.selected.domain}</div>
+            <h2 style={{ margin: '8px 0' }}>#{m.selected.index} {m.selected.name}</h2>
+            <p className="sub">{m.selected.icon} · {m.selected.metric} · target {m.selected.target}</p>
+            <p>{m.selected.level3_application}</p>
+            <button className="btn gold" onClick={() => m.setSelected(null)}>Close</button>
+          </div>
         </div>
-      </section>
+      )}
     </div>
+  );
+}
+
+export default function VedicExplorer() {
+  return (
+    <MatrixProvider>
+      <Shell />
+    </MatrixProvider>
   );
 }
