@@ -8,6 +8,7 @@ import VedicCalculator from './VedicCalculator';
 import BodyMindQuiz from './BodyMindQuiz';
 import DailyInsight from './DailyInsight';
 import WearablePanel from './WearablePanel';
+import ClinicalPanel from './ClinicalPanel';
 import ExportBar from './ExportBar';
 import type { Domain } from '@/lib/types';
 
@@ -16,15 +17,23 @@ const DOMAINS: Array<Domain | 'All'> = ['All', 'Physical', 'Mental', 'Bridge', '
 function Shell() {
   const m = useMatrix();
   const [drone, setDrone] = useState(false);
-  const [tab, setTab] = useState<'map' | 'calc' | 'quiz' | 'insight' | 'wear'>('map');
+  const [tab, setTab] = useState<'map' | 'calc' | 'quiz' | 'insight' | 'wear' | 'clinic'>('map');
   const visible = m.domainFilter === 'All' ? m.nodes : m.nodes.filter((n) => n.domain === m.domainFilter);
+  const labels: Record<typeof tab, string> = {
+    map: 'Map + cards',
+    calc: 'Vedic calculator',
+    quiz: 'Quiz',
+    insight: 'Daily insight',
+    wear: 'Wearable',
+    clinic: 'Working bench',
+  };
 
   return (
     <div className="shell">
       <div id="matrix-root" className="panel stack">
         <header>
           <h1>Body–Mind–Vedic Matrix</h1>
-          <p className="sub">51 subsystems · 22-śruti just intonation · English first, IAST in parentheses</p>
+          <p className="sub">51 subsystems · English first, IAST in parentheses · educational model, not a medical device</p>
         </header>
         <div className="grid3">
           <div>
@@ -36,7 +45,7 @@ function Shell() {
             <input type="range" min={0} max={100} value={m.vagal} onChange={(e) => m.setVagal(+e.target.value)} />
           </div>
           <div>
-            <label className="meta">Laya L = {m.laya.toFixed(0)} BPM · śvāsa {m.sim.breathRate.toFixed(1)} / min</label>
+            <label className="meta">Laya L = {m.laya.toFixed(0)} BPM · breath {m.sim.breathRate.toFixed(1)} / min</label>
             <input type="range" min={40} max={180} value={m.laya} onChange={(e) => m.setLaya(+e.target.value)} />
           </div>
         </div>
@@ -45,17 +54,15 @@ function Shell() {
           <div>HR <b>{m.sim.heartRate.toFixed(0)}</b></div>
           <div>RMSSD <b>{m.sim.hrvRmssd.toFixed(0)}</b> ms</div>
           <div>Bandwidth <b>{m.sim.bandwidth.toFixed(0)}</b>%</div>
-          <div>Inhib. gain <b>{m.sim.inhibitionGain.toFixed(2)}</b></div>
-          <div>Cytokines <b>{m.sim.cytokines.toFixed(2)}</b></div>
-          <div>0.1 Hz coherence <b>{(m.sim.coherence * 100).toFixed(0)}</b>%</div>
+          <div>Ψ resonance <b>{(m.sim.coherence * 100).toFixed(0)}</b>%</div>
         </div>
         <div className="row">
           <div style={{ flex: 1 }}>
-            <label className="meta">Ādhāra ṣaḍja {m.baseSa.toFixed(1)} Hz</label>
+            <label className="meta">Base pitch (ādhāra ṣaḍja) {m.baseSa.toFixed(1)} Hz</label>
             <input type="range" min={120} max={360} step={0.5} value={m.baseSa} onChange={(e) => { const v = +e.target.value; m.setBaseSa(v); acousticEngine.updateDroneFreq(v); }} />
           </div>
           <button className={drone ? 'btn rose' : 'btn em'} onClick={() => acousticEngine.toggleDrone(m.baseSa, setDrone)}>
-            {drone ? 'Stop tānpūrā' : 'Tānpūrā drone'}
+            {drone ? 'Stop drone' : 'Tonic drone'}
           </button>
           <button className={m.loopOn ? 'btn gold' : 'btn'} onClick={() => m.setLoopOn(!m.loopOn)}>
             {m.loopOn ? 'Loops on' : 'Loops off'}
@@ -69,10 +76,8 @@ function Shell() {
         </div>
         <div className="tel">{m.telemetry}</div>
         <div className="tabs row">
-          {(['map', 'calc', 'quiz', 'insight', 'wear'] as const).map((t) => (
-            <button key={t} className={tab === t ? 'on' : ''} onClick={() => setTab(t)}>
-              {t === 'map' ? 'Map + cards' : t === 'calc' ? 'Vedic calculator' : t === 'quiz' ? 'Quiz' : t === 'insight' ? 'Daily insight' : 'Wearable'}
-            </button>
+          {(['map', 'calc', 'quiz', 'insight', 'wear', 'clinic'] as const).map((t) => (
+            <button key={t} className={tab === t ? 'on' : ''} onClick={() => setTab(t)}>{labels[t]}</button>
           ))}
         </div>
         {tab === 'map' && (
@@ -92,13 +97,14 @@ function Shell() {
         {tab === 'quiz' && <BodyMindQuiz />}
         {tab === 'insight' && <DailyInsight />}
         {tab === 'wear' && <WearablePanel />}
+        {tab === 'clinic' && <ClinicalPanel />}
       </div>
       {m.selected && (
         <div className="popup" onClick={() => m.setSelected(null)}>
           <div className="inner" onClick={(e) => e.stopPropagation()}>
             <div className="badge">{m.selected.domain}</div>
             <h2 style={{ margin: '8px 0' }}>#{m.selected.index} {m.selected.name}</h2>
-            <p className="sub">{m.selected.icon} · {m.selected.metric} · target {m.selected.target}</p>
+            <p className="sub">{m.selected.metric}</p>
             <p>{m.selected.level3_application}</p>
             <button className="btn gold" onClick={() => m.setSelected(null)}>Close</button>
           </div>
